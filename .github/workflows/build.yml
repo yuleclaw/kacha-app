@@ -25,7 +25,12 @@ jobs:
         run: npm run build
 
       - name: Add Android platform (if not exists)
-        run: npx cap add android --web-dir dist || true
+        run: |
+          ls -la
+          npx cap add android || (echo "cap add failed, checking dist..." && ls dist/ && false)
+
+      - name: Debug - list files
+        run: ls -la && ls android/ || echo "no android dir"
 
       - name: Sync Capacitor
         run: npx cap sync android
