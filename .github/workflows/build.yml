@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,13 +24,14 @@ jobs:
       - name: Build web app
         run: npm run build
 
-      - name: Add Android platform (if not exists)
+      - name: Ensure Android platform exists
         run: |
           ls -la
-          npx cap add android || (echo "cap add failed, checking dist..." && ls dist/ && false)
-
-      - name: Debug - list files
-        run: ls -la && ls android/ || echo "no android dir"
+          echo "Checking @capacitor/android..."
+          npm ls @capacitor/android || (echo "Installing @capacitor/android..." && npm install @capacitor/android)
+          echo "Adding Android platform..."
+          npx cap add android || echo "Android platform already exists or error occurred"
+          ls -la android/ || echo "android dir not found"
 
       - name: Sync Capacitor
         run: npx cap sync android
